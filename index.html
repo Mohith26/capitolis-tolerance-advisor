@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tolerance Advisor · FX SA-CCR Optimization · Capitolis (concept)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <img class="wordmark" src="capitolis-wordmark.png" alt="Capitolis">
+  <nav class="product-nav">
+    <a>Capital Marketplace</a><a class="on">Portfolio Optimization</a><a>Novations</a><a>Securities Lending</a>
+  </nav>
+  <div class="top-right">
+    <span class="window"><i data-lucide="clock-3"></i>Dry run closes 14:00 ET</span>
+    <i data-lucide="bell" class="ico"></i><i data-lucide="circle-help" class="ico"></i>
+    <span class="who"><span id="participant"></span><span class="avatar">MG</span></span>
+  </div>
+</header>
+<div class="shell">
+  <aside class="side">
+    <div class="side-h">FX</div>
+    <a><i data-lucide="layout-grid"></i>Overview</a>
+    <a class="on"><i data-lucide="repeat-2"></i>Optimization runs</a>
+    <a><i data-lucide="upload"></i>Portfolio upload</a>
+    <a><i data-lucide="file-check-2"></i>Proposals</a>
+    <a><i data-lucide="arrow-left-right"></i>Trade booking</a>
+    <div class="side-h">Rates</div>
+    <a><i data-lucide="shield"></i>IM optimization</a>
+    <a><i data-lucide="minimize-2"></i>Compression</a>
+    <div class="side-h">Settings</div>
+    <a><i data-lucide="network"></i>Counterparty links</a>
+    <a><i data-lucide="sliders-horizontal"></i>Default tolerances</a>
+    <a><i data-lucide="users"></i>Users</a>
+  </aside>
+  <main>
+    <div class="crumbs">Optimization runs <i data-lucide="chevron-right"></i> FX SA-CCR <i data-lucide="chevron-right"></i> <span>FXSACCR-2026-11-12</span></div>
+    <div class="page-h">
+      <div>
+        <h1>FX SA-CCR Optimization <span class="light">· 12 Nov 2026</span></h1>
+        <div class="meta"><span class="pill dry"><span class="dot"></span>Dry run</span><span>Indicative proposal</span><span class="sep"></span><span>Data as of 11 Nov close</span><span class="sep"></span><span>14 participants</span><span class="sep"></span><span>8 pairs</span><span class="sep"></span><span>Margined netting sets</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="reset"><i data-lucide="rotate-ccw"></i>Reset to submitted</button>
+        <button class="btn primary" id="apply"><i data-lucide="wand-sparkles"></i>Apply suggested tolerances</button>
+      </div>
+    </div>
+    <div class="tabs"><a>Summary</a><a>Proposal</a><a>Trades</a><a>Tolerances</a><a class="on">Tolerance Advisor <span class="new">New</span></a><a>Audit log</a></div>
+
+    <section id="kpis" class="kpis"></section>
+
+    <section class="card">
+      <div class="card-h">
+        <div><h2>Your tolerances, priced</h2><p>Marginal value of each of your tolerances in this dry run, read from the optimizer's dual solution and checked against re-solves. Edit a tolerance to re-run.</p></div>
+        <div class="card-tools"><span class="lock"><i data-lucide="lock"></i>Only your own constraints are priced. Other participants' tolerances stay private.</span></div>
+      </div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr>
+          <th>Pair</th><th class="num">Tolerance $mm</th><th class="num">Residual used</th><th>Status</th>
+          <th class="num">RWA per +$1mm</th><th class="num">EAD per +$1mm</th><th class="num">Price holds for</th>
+          <th>Improving trade chain</th><th class="num">Free to cut to</th><th class="num">Suggested</th>
+        </tr></thead>
+        <tbody id="tol-body"></tbody>
+      </table></div>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <div class="card-h"><div><h2 id="chart-title"></h2><p>Network RWA released by your tolerance alone. Every point is an exact re-solve of this pair with all other submissions fixed.</p></div>
+          <div class="legend"><span><i class="sw net"></i>Network RWA released</span><span><i class="sw cur"></i>Submitted</span><span><i class="sw rec"></i>Suggested</span></div></div>
+        <div id="chart" class="chart"></div>
+        <p id="chart-note" class="note"></p>
+      </div>
+      <div class="card">
+        <div class="card-h"><div><h2>Residual risk budget</h2><p>Hold the market risk you are willing to carry fixed (Σ daily vol × tolerance) and spend it where it releases the most.</p></div></div>
+        <div class="slider-row"><label for="budget">Budget</label><b id="budget-val"></b></div>
+        <input id="budget" type="range" min="25" max="200" step="5" value="100">
+        <div id="alloc" class="alloc"></div>
+        <ul class="how">
+          <li>Release is concave in each tolerance (LP right-hand-side parametrics), so filling the budget greedily by release per unit of risk is exact on the 41-point grid.</li>
+          <li>Suggested tolerances are re-solved end to end before they are shown; the KPIs are re-solved results, not estimates.</li>
+        </ul>
+        <div class="solve" id="solve-ms"></div>
+      </div>
+    </section>
+    <footer class="foot">Unofficial concept demo by Mohith Gajjela. Not affiliated with Capitolis. Synthetic data.</footer>
+  </main>
+</div>
+<div id="tip" class="tip" hidden></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
